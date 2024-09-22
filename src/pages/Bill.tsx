@@ -18,16 +18,19 @@ interface Bill {
 }
 const Bill = () => {
   const [rows, setRows] = useState([
-    { id: 1, detail: 'New Charge', amount: 0, percentage: 0 },
-    { id: 2, detail: 'New Charge', amount: 0, percentage: 0 }
+    { id: 1, detail: "New Charge", amount: 0, percentage: 0 },
+    { id: 2, detail: "New Charge", amount: 0, percentage: 0 },
   ]);
 
   const addRow = () => {
-    const newRow = { id: rows.length + 1, detail: 'New Charge', amount: 0, percentage: 0 };
+    const newRow = {
+      id: rows.length + 1,
+      detail: "New Charge",
+      amount: 0,
+      percentage: 0,
+    };
     setRows([...rows, newRow]);
   };
-
-
 
   const bills: Bill[] = [
     {
@@ -50,6 +53,24 @@ const Bill = () => {
     },
   ];
   const [Hospital, setHospital] = useState<Bill>(bills[0]);
+  const totalAmount = rows.reduce((acc, row) => acc + row.amount, 0);
+  const totalPercentage = rows.reduce((acc, row) => acc + row.percentage, 0);
+
+  const handleInputChange = (id:number, field:string, value:number|string) => {
+    const updatedRows = rows.map((row) =>
+      row.id === id
+        ? {
+            ...row,
+            [field]:
+              field === "amount" || field === "percentage"
+                ? Number(value)
+                : value,
+          }
+        : row
+    );
+    setRows(updatedRows);
+  };
+
   return (
     <>
       <p className="text-lg md:text-xl text-center m-3 font-bold">
@@ -57,12 +78,12 @@ const Bill = () => {
       </p>
       <div className="max-w-7xl mx-auto p-4 bg-black shadow-lg text-white rounded-xl m-2">
         <div className=" mb-6">
-          <select
+          <select 
             className="bg-black"
             onChange={(e) => setHospital(bills[parseInt(e.target.value) - 1])}
           >
             {bills.map((bill) => (
-              <option value={bill.id}>{bill.name}</option>
+              <option key={bill.id} value={bill.id}>{bill.name}</option>
             ))}
           </select>
         </div>
@@ -75,34 +96,57 @@ const Bill = () => {
         <div>
           <div className="flex  items-end justify-end">
             <p className="w-1/2">Service Charge Description</p>
-          <Button className="mb-2" onClick={addRow}>Add a Row</Button>
+            <Button className="mb-2" onClick={addRow}>
+              Add a Row
+            </Button>
           </div>
           <Table>
-            <TableHeader className=" bg-white/35 text-center">
-              <TableRow>
+            <TableHeader className=" bg-white/35">
+              <TableRow className="flex-col items-center justify-center text-center">
                 <TableHead className="text-white">S.No</TableHead>
-                <TableHead className="text-white">Details</TableHead>
-                <TableHead className="text-white">amound</TableHead>
-                <TableHead className="text-white">Percentage %</TableHead>
+                <TableHead className="text-white text-center">Details</TableHead>
+                <TableHead className="text-white text-center">amound</TableHead>
+                <TableHead className="text-white text-center">Percentage %</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-               {rows.map((data) => (
-                 <TableRow key={data.id}>
-                   <TableCell>{data.id}</TableCell>
-                   <TableCell><Input placeholder={data.detail}/></TableCell>
-                   <TableCell><Input placeholder={data.percentage.toString()} type="number"/></TableCell>
-                   <TableCell><Input placeholder={data.amount.toString()} type="number"/></TableCell>
-                 </TableRow>
-               ))}
-            
+              {rows.map((data) => (
+                <TableRow key={data.id}>
+                  <TableCell>{data.id}</TableCell>
+                  <TableCell>
+                    <Input
+                      placeholder={data.detail}
+                      value={data.detail}
+                      onChange={(e) =>
+                        handleInputChange(data.id, "detail", e.target.value)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      placeholder={data.amount.toString()}
+                      type="number"
+                      onChange={(e) =>
+                        handleInputChange(data.id, "amount", e.target.value)
+                        }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input placeholder={data.percentage.toString()} type="number" 
+                     onChange={(e) =>
+                      handleInputChange(data.id, "percentage", e.target.value)
+                      }
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
             <TableFooter>
               <TableRow>
                 <TableCell>Total</TableCell>
                 <TableCell> </TableCell>
-                <TableCell>129565</TableCell>
-                <TableCell>182</TableCell>
+                <TableCell >{totalAmount}</TableCell>
+                <TableCell >{totalPercentage}</TableCell>
               </TableRow>
             </TableFooter>
           </Table>
@@ -129,40 +173,40 @@ const Bill = () => {
                 <TableCell>Cunsultation Charge</TableCell>
                 <TableCell>9987</TableCell>
                 <TableCell>1</TableCell>
-                <TableCell>5182.60</TableCell>
+                <TableCell>2000</TableCell>
                 <TableCell>18</TableCell>
-                <TableCell>5182.60</TableCell>
+                <TableCell>2000</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>2</TableCell>
                 <TableCell>service Charge</TableCell>
                 <TableCell>927</TableCell>
                 <TableCell>1</TableCell>
-                <TableCell>512.60</TableCell>
+                <TableCell>{totalPercentage}</TableCell>
                 <TableCell>8</TableCell>
-                <TableCell>512.60</TableCell>
+                <TableCell>{totalPercentage}</TableCell>
               </TableRow>
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell>Total Taxable amound </TableCell>
                 <TableCell> </TableCell>
                 <TableCell> </TableCell>
                 <TableCell> </TableCell>
                 <TableCell> </TableCell>
                 <TableCell> </TableCell>
-                <TableCell>129565</TableCell>
+                <TableCell> </TableCell>
+                <TableCell> </TableCell>
               </TableRow>
             </TableFooter>
           </Table>
         </div>
         {/* Totals Section */}
         <div className="text-right mb-4">
-          <p className="text-sm sm:text-base">Total Taxable Amount: ₹7182.60</p>
-          <p className="text-sm sm:text-base">SGST: ₹646.43</p>
-          <p className="text-sm sm:text-base">CGST: ₹646.43</p>
+          <p className="text-sm sm:text-base">Total Taxable Amount: ₹{`  ${totalPercentage+2000}`}</p>
+          <p className="text-sm sm:text-base">SGST: ₹ 646.43</p>
+          <p className="text-sm sm:text-base">CGST: ₹ 646.43</p>
           <p className="text-sm sm:text-base font-bold">
-            Net Payable Amount: ₹8475.28
+            Net Payable Amount: ₹ 4475.28
           </p>
         </div>
       </div>
