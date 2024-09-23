@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -9,8 +10,43 @@ import {
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Spotlight } from "../components/ui/Spotlight";
+import { loginValidator } from "../validators/LoginValidator";
+import { toast } from "sonner";
+import ScaleLoader from "react-spinners/ScaleLoader";
+import axios from "../intersepter/axiosIntersepter";
+import { useNavigate } from "react-router-dom";
+import { encrypt } from "../validators/tokenValidatior";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    const res = loginValidator(email, password);
+    if (!res) {
+      setLoading(false);
+      return;
+    }
+    await axios
+      .post("/auth/login", { email, password })
+      .then((data) => {
+        const hToken =encrypt(data.data);
+        localStorage.setItem("token", hToken);
+        toast.success("Login successful");
+        setLoading(false);
+        setEmail("");
+        setPassword("");
+        navigate("/dashboard");
+      })
+      .catch((err) => {
+        setLoading(false);
+        toast.error(err.response.data.error.message);
+      });
+  };
+
   return (
     <>
       <div className="flex items-center justify-center h-screen">
@@ -30,8 +66,10 @@ const Login = () => {
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
+                  value={email}
                   id="email"
                   type="email"
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="m@example.com"
                   required
                 />
@@ -40,14 +78,17 @@ const Login = () => {
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  value={password}
+                  id="password"
+                  type="password"
+                  required
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" onClick={handleSubmit}>
+                {loading ? <ScaleLoader /> : "Login"}
               </Button>
-            </div>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
             </div>
           </CardContent>
         </Card>
@@ -57,3 +98,6 @@ const Login = () => {
 };
 
 export default Login;
+
+
+
