@@ -21,16 +21,11 @@ import {
 import { Tabs, TabsContent } from "../components/ui/tabs";
 import DataTable from "../components/DataTable";
 import NavBar from "../components/NavBar";
-import CreateBill from "../components/CreateBill";
-import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 const BillingPage = () => {
-  const popup =useRef<HTMLButtonElement>(null)
-  const handlePopup=()=>{
-    if(popup.current){
-      popup.current.click()
-    }
-  }
+  const navigate =useNavigate()
+ 
   return (
     <>
       <div className="flex min-h-screen w-full  flex-col bg-muted/40">
@@ -61,7 +56,7 @@ const BillingPage = () => {
                       </DropdownMenuCheckboxItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <Button size="sm" className="h-7 gap-1" onClick={handlePopup}>
+                  <Button size="sm" className="h-7 gap-1" onClick={()=>navigate("/bill")}>
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       Create new Bill
@@ -92,7 +87,6 @@ const BillingPage = () => {
           </main>
         </div>
       </div>
-      <CreateBill ref={popup}/>
     </>
   );
 };
