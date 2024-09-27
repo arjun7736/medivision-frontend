@@ -35,10 +35,11 @@ import axios from "../intersepter/axiosIntersepter";
 import { useEffect, useState } from "react";
 
 const BillingPage = () => {
+  const [search, setSearch] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("Daily");
-  const [allBills, setAllbills] = useState<Bill[] | null>(null);
+  // eslint-disable-next-line prefer-const
+  let [allBills, setAllbills] = useState<Bill[] | null|undefined>(null);
   const navigate = useNavigate();
-
   const getAllBills = async (filter = "Daily") => {
     setSelectedFilter(filter);
     await axios
@@ -55,11 +56,17 @@ const BillingPage = () => {
     getAllBills();
   }, []);
 
+  if (search) {
+    const data = allBills?.filter((data) =>
+      data.hospital[0]?.name.toLowerCase().includes(search.toLowerCase())
+    );
+    allBills = data;
+  }
   return (
     <>
       <div className="flex min-h-screen w-full  flex-col bg-muted/40">
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-          <NavBar />
+          <NavBar search={setSearch} />
           <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
             <Tabs defaultValue="all">
               <div className="">
@@ -117,11 +124,15 @@ const BillingPage = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                   {allBills?.length==0?(<>
-                   <div className="text-center text-xl">
-                    No Bills To Show
-                   </div>
-                   </>): <DataTable allBills={allBills} />}
+                    {allBills?.length == 0 ? (
+                      <>
+                        <div className="text-center text-xl">
+                          No Bills To Show
+                        </div>
+                      </>
+                    ) : (
+                      <DataTable allBills={allBills} />
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -129,10 +140,10 @@ const BillingPage = () => {
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#" />
+                  <PaginationPrevious  href="#" />
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationLink href="#" size={10}>
+                  <PaginationLink href="#" >
                     1
                   </PaginationLink>
                 </PaginationItem>
@@ -140,7 +151,7 @@ const BillingPage = () => {
                   <PaginationEllipsis />
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationNext href="#" size={10} />
+                  <PaginationNext href="#" />
                 </PaginationItem>
               </PaginationContent>
             </Pagination>

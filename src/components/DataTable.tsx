@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-const DataTable = ({ allBills }: { allBills: Bill[] | null }) => {
+const DataTable = ({ allBills }: { allBills: Bill[] | null|undefined }) => {
   const navigate = useNavigate();
   return (
     <>
