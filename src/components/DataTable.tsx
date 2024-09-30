@@ -16,10 +16,11 @@ import {
 import { Button } from "./ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { FaRegEye } from "react-icons/fa";
+import { RiFileDownloadLine } from "react-icons/ri";
+import { MdOutlineLocalPrintshop } from "react-icons/md";
 
-
-
-const DataTable = ({ allBills }: { allBills: Bill[] | null|undefined }) => {
+const DataTable = ({ allBills }: { allBills: Bill[] | null | undefined }) => {
   const navigate = useNavigate();
   return (
     <>
@@ -28,7 +29,9 @@ const DataTable = ({ allBills }: { allBills: Bill[] | null|undefined }) => {
           <TableRow>
             <TableHead>Name of Organisation</TableHead>
             <TableHead>Total Amount</TableHead>
-            <TableHead className="hidden md:table-cell">Total Services</TableHead>
+            <TableHead className="hidden md:table-cell">
+              Total Services
+            </TableHead>
             <TableHead className="hidden md:table-cell">Created at</TableHead>
             <TableHead>
               <span className="sr-only">Actions</span>
@@ -41,8 +44,10 @@ const DataTable = ({ allBills }: { allBills: Bill[] | null|undefined }) => {
               <TableCell className="font-medium">
                 {bill.hospital[0].name}
               </TableCell>
-              <TableCell>₹ {bill.totalPercentage}</TableCell>
-              <TableCell className="hidden md:table-cell">{bill.data.length}</TableCell>
+              <TableCell>₹ {bill.netPay.toFixed(2)}</TableCell>
+              <TableCell className="hidden md:table-cell">
+                {bill.data.length}
+              </TableCell>
               <TableCell className="hidden md:table-cell">
                 {new Date(bill.createdAt).toLocaleString()}
               </TableCell>
@@ -56,11 +61,11 @@ const DataTable = ({ allBills }: { allBills: Bill[] | null|undefined }) => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => navigate("/bill")}>
-                      View
+                    <DropdownMenuItem onClick={() => navigate(`/viewbill/${bill._id}`)}>
+                      <FaRegEye className="mr-2" /> View
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Save As PDF</DropdownMenuItem>
-                    <DropdownMenuItem>Print</DropdownMenuItem>
+                    <DropdownMenuItem> <RiFileDownloadLine className="mr-2"/> Save As PDF</DropdownMenuItem>
+                    <DropdownMenuItem><MdOutlineLocalPrintshop className="mr-2"/> Print</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
@@ -74,35 +79,39 @@ const DataTable = ({ allBills }: { allBills: Bill[] | null|undefined }) => {
 
 export default DataTable;
 
-
-interface Bill{
-  _id:string,
-  address:string,
-  bankDetails:string,
-  branch:string,
-  cinNo:number,
-  createdAt:Date,
-  currency:string,
-  data:[{
-    amound:number,
-    description:string,
-    id:number,
-    percentage:number,
-    _id:string,
-  }],
-  email:string,
-  gstNo:number,
-  hospital:[{
-    district:string,
-    id:string,
-    name:string,
-    place:string,
-    _id:string
-  }],
-  ifscCode:number,
-  invoiceNo:number,
-  name:string,
-  paymentType:string,
-  totalAmound:number,
-  totalPercentage:number,
+interface Bill {
+  _id: string;
+  address: string;
+  bankDetails: string;
+  branch: string;
+  cinNo: number;
+  createdAt: Date;
+  currency: string;
+  data: [
+    {
+      amound: number;
+      description: string;
+      id: number;
+      percentage: number;
+      _id: string;
+    }
+  ];
+  email: string;
+  gstNo: number;
+  hospital: [
+    {
+      district: string;
+      id: string;
+      name: string;
+      place: string;
+      _id: string;
+    }
+  ];
+  ifscCode: number;
+  invoiceNo: number;
+  name: string;
+  paymentType: string;
+  totalAmound: number;
+  totalPercentage: number;
+  netPay:number
 }

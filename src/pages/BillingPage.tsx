@@ -197,5 +197,6 @@ interface Bill {
   name: string;
   paymentType: string;
   totalAmound: number;
+  netPay:number
   totalPercentage: number;
 }

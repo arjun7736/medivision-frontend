@@ -7,6 +7,7 @@ import { Toaster } from "./components/ui/sonner";
 import HashLoader from "react-spinners/HashLoader";
 import { useEffect, useState } from "react";
 import { decrypt } from "./validators/tokenValidatior";
+import ViewBill from "./pages/ViewBill";
 
 const Loading = () => {
   return (
@@ -92,6 +93,7 @@ function App() {
             <Route path="/login" element={<PublicRoute element={<Login />} />} />
             <Route path="/dashboard" element={<ProtectedRoute element={<BillingPage />} />} />
             <Route path="/bill" element={<ProtectedRoute element={<Bill />} />} />
+            <Route path="/viewbill/:id" element={<ProtectedRoute element={<ViewBill />}/>}/>
           </Routes>
         </BrowserRouter>
         <Toaster className="bg-white" />

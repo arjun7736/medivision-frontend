@@ -93,13 +93,17 @@ const Bill = () => {
     });
     setRows(updatedRows);
   };
+  const totalGst = ((totalPercentage + 2000) * 18) / 100;
+  const netPay = (totalPercentage + 2000 + totalGst * 2)
 
   const handleClick = async () => {
     const data = {
       data: [...rows],
       hospital: Hospital,
       totalAmount: totalAmount,
-      totalPercentage: totalAmount,
+      totalPercentage: totalPercentage,
+      netPay:netPay,
+      gstAmount:totalGst
     };
     await axios
       .post("/bill/create-bill", data)
@@ -111,7 +115,6 @@ const Bill = () => {
       });
   };
 
-  const totalGst = ((totalPercentage + 2000) * 18) / 100;
 
   return (
     <>
@@ -265,7 +268,7 @@ const Bill = () => {
           <p className="text-sm sm:text-base">CGST: ₹ {totalGst.toFixed(2)}</p>
           <p className="text-sm sm:text-base font-bold">
             Net Payable Amount: ₹{" "}
-            {(totalPercentage + 2000 + totalGst * 2).toFixed(2)}
+            {netPay.toFixed(2)}
           </p>
         </div>
         <div className="flex items-center justify-center">
